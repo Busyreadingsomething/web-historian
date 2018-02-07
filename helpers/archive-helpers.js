@@ -24,18 +24,37 @@ exports.initialize = function(pathsObj) {
 
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
-
 exports.readListOfUrls = function(callback) {
+  fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+    data = data.split('\n');
+    callback(err, data);
+  });
 };
+
+// fs.exists('/etc/passwd', (exists) => {
+//   console.log(exists ? 'it\'s there' : 'no passwd!');
+// });
 
 exports.isUrlInList = function(url, callback) {
+  fs.readFile(exports.paths.list, 'utf8', (err, data) => {
+    data = data.split('\n');
+    var exists = data.includes(url);
+    callback(err, exists);
+  });
 };
 
+// fs.appendFile('message.txt', 'data to append', (err) => {
+//   if (err) throw err;
+//   console.log('The "data to append" was appended to file!');
+// });
 exports.addUrlToList = function(url, callback) {
+  fs.appendFile(exports.paths.list, url, callback);
 };
 
 exports.isUrlArchived = function(url, callback) {
+  return;
 };
 
 exports.downloadUrls = function(urls) {
+  return;
 };
