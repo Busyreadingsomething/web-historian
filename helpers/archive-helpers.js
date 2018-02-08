@@ -52,9 +52,19 @@ exports.addUrlToList = function(url, callback) {
 };
 
 exports.isUrlArchived = function(url, callback) {
-  return;
+  fs.stat(`${exports.paths.archivedSites}/${url}`, (err, data) => {
+    if (err === null) {
+      callback(null, true);      
+    } else if (err.code === 'ENOENT') {
+      callback(null, false);
+    } else {
+      callback(err, null);
+    }
+  });
 };
 
 exports.downloadUrls = function(urls) {
-  return;
+  urls.forEach((url) => {
+    fs.writeFileSync(`${exports.paths.archivedSites}/${url}`);
+  });
 };
