@@ -1,11 +1,12 @@
 var path = require('path');
+var urlParser = require('url');
 var archive = require('../helpers/archive-helpers');
 var {serveAssets} = require ('./http-helpers');
 // require more modules/folders here!
 
 exports.handleRequest = function (req, res) {
   const { method, url, headers } = req;
-  console.log(method, url);
+
   if (method === 'GET') {
     if (url === '/') {
       serveAssets(res, archive.paths.index, (err, data) => {
@@ -26,19 +27,30 @@ exports.handleRequest = function (req, res) {
           res.end('File does not exist');
         }
       });
-      
-      // console.log('THEY CHANGED ME!', exists);
-      
-      // if (!exists) {
-      //   res.writeHead(404, headers);
-      //   res.end('File does not exist');
-      // } else {
-      //   serveAssets(res, formatedUrl, (err, data) => {
-      //     res.writeHead(200, headers);
-      //     res.end(data);
-      //   });
-      // }
     }
+  } else if (method === 'POST') {
+    let body = [];
+    req.on('error', function(err) {
+      console.error(err);
+    }).on('data', function(chunk) {
+      body.push(chunk);
+    }).on('end', function() { 
+      body = Buffer.concat(body).toString().slice(4) + '\n';
+
+      archive.isUrlInList(body, (err, exists) => {
+        if (exists) {
+          serveAssets(res, archive.paths.loading, (err, data) => {
+            res.writeHead(200, headers);
+            res.end(data);
+          });
+        } else {
+          archive.addUrlToList(body, () => {
+            res.writeHead(302, headers);
+            res.end();
+          });
+        }
+      });
+    });
   } else {
     res.end(archive.paths.list); 
   }
