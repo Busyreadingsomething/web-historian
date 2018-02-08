@@ -22,9 +22,6 @@ exports.initialize = function(pathsObj) {
   _.each(pathsObj, function(path, type) {
     exports.paths[type] = path;
   });
-  console.log(exports.paths.siteAssets);
-  console.log(exports.paths.archivedSites);
-  console.log(exports.paths.list);
 };
 
 // The following function names are provided to you to suggest how you might
