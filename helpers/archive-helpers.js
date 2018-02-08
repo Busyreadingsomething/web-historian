@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
-var request = require("request");
+var request = require('request');
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
  * Consider using the `paths` object below to store frequently used file paths. This way,
@@ -12,7 +12,9 @@ var request = require("request");
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
+  index: path.join(__dirname, '../web/public/index.html'),
+  loading: path.join(__dirname, '../web/public/loading.html'),
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -20,6 +22,9 @@ exports.initialize = function(pathsObj) {
   _.each(pathsObj, function(path, type) {
     exports.paths[type] = path;
   });
+  console.log(exports.paths.siteAssets);
+  console.log(exports.paths.archivedSites);
+  console.log(exports.paths.list);
 };
 
 // The following function names are provided to you to suggest how you might
@@ -31,10 +36,6 @@ exports.readListOfUrls = function(callback) {
   });
 };
 
-// fs.exists('/etc/passwd', (exists) => {
-//   console.log(exists ? 'it\'s there' : 'no passwd!');
-// });
-
 exports.isUrlInList = function(url, callback) {
   fs.readFile(exports.paths.list, 'utf8', (err, data) => {
     data = data.split('\n');
@@ -43,10 +44,6 @@ exports.isUrlInList = function(url, callback) {
   });
 };
 
-// fs.appendFile('message.txt', 'data to append', (err) => {
-//   if (err) throw err;
-//   console.log('The "data to append" was appended to file!');
-// });
 exports.addUrlToList = function(url, callback) {
   fs.appendFile(exports.paths.list, url, callback);
 };
