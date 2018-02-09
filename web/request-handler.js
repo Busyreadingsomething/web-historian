@@ -6,7 +6,7 @@ var {serveAssets} = require ('./http-helpers');
 
 exports.handleRequest = function (req, res) {
   const { method, url, headers } = req;
-
+  console.log(method, url);
   if (method === 'GET') {
     if (url === '/') {
       serveAssets(res, archive.paths.index, (err, data) => {
@@ -18,7 +18,7 @@ exports.handleRequest = function (req, res) {
       
       archive.isUrlArchived(url, (err, data) => {
         if (data) {
-          serveAssets(res, formatedUrl, (err, data) => {
+          serveAssets(res, url, (err, data) => {
             res.writeHead(200, headers);
             res.end(data);
           });
@@ -35,16 +35,21 @@ exports.handleRequest = function (req, res) {
     }).on('data', function(chunk) {
       body.push(chunk);
     }).on('end', function() { 
-      body = Buffer.concat(body).toString().slice(4) + '\n';
+      body = Buffer.concat(body).toString().slice(4);
 
       archive.isUrlInList(body, (err, exists) => {
+        console.log(exists, body);
         if (exists) {
-          serveAssets(res, archive.paths.loading, (err, data) => {
-            res.writeHead(200, headers);
-            res.end(data);
-          });
+          res.write(`${archive.paths.archivedSites}/${body}`);
+          // http.get(`${archive.paths.archivedSites}/${body}`);
+          // res.writeHead(303, headers);
+          res.end();
+          // serveAssets(res, `${archive.paths.archivedSites}/${body}`, (err, data) => {
+          //   res.writeHead(303, headers);
+          //   res.end(data);
+          // });
         } else {
-          archive.addUrlToList(body, () => {
+          archive.addUrlToList(body + '\n', () => {
             res.writeHead(302, headers);
             res.end();
           });

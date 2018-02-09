@@ -15,6 +15,7 @@ exports.paths = {
   list: path.join(__dirname, '../archives/sites.txt'),
   index: path.join(__dirname, '../web/public/index.html'),
   loading: path.join(__dirname, '../web/public/loading.html'),
+  workerLog: path.join(__dirname, '../archives/log.txt'),
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -61,6 +62,13 @@ exports.downloadUrls = function(urls) {
   urls.forEach((url) => {
     request(`https://${url}`, function(error, response, body) {
       fs.writeFile(`${exports.paths.archivedSites}/${url}`, body);
+      let log = `The url: '${url}' was appended to file!\n`;
+      fs.appendFile(exports.paths.workerLog, log, (err) => {
+        if (err) {
+          console.error(err);
+        }
+        console.log(log);
+      });
     });
   });
 };
