@@ -1,6 +1,11 @@
 var archive = require('../helpers/archive-helpers');
-// Use the code in `archive-helpers.js` to actually download the urls
-// that are waiting.
+// var CronJob = require('cron').CronJob;
+// // Use the code in `archive-helpers.js` to actually download the urls
+// // that are waiting.
+
+// var job = new CronJob('* * * * * *', function() {
+//   console.log('You will see this message every second');
+// }, null, true, 'America/Los_Angeles');
 const workerBee = function() {
   archive.readListOfUrls((err, data) => {
     if (err) {
@@ -13,7 +18,6 @@ const workerBee = function() {
       });
     }
     data.pop();
-    console.log('--------->', data);
     archive.downloadUrls(data);
   });
 };

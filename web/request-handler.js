@@ -37,10 +37,10 @@ exports.handleRequest = function (req, res) {
     }).on('end', function() { 
       body = Buffer.concat(body).toString().slice(4);
 
-      archive.isUrlInList(body, (err, exists) => {
+      archive.isUrlArchived(body, (err, exists) => {
         console.log(exists, body);
         if (exists) {
-          res.writeHead(303, {location: `/${body}`});
+          res.writeHead(302, {location: `/${body}`});
           res.end();
         } else {
           archive.addUrlToList(body + '\n', () => {
