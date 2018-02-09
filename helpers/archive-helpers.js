@@ -62,7 +62,8 @@ exports.downloadUrls = function(urls) {
   urls.forEach((url) => {
     request(`https://${url}`, function(error, response, body) {
       fs.writeFile(`${exports.paths.archivedSites}/${url}`, body);
-      let log = `The url: '${url}' was appended to file!\n`;
+      let date = new Date();
+      let log = `The url: '${url}' was appended to file at ${date}!\n`;
       fs.appendFile(exports.paths.workerLog, log, (err) => {
         if (err) {
           console.error(err);

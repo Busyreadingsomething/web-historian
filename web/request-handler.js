@@ -14,12 +14,12 @@ exports.handleRequest = function (req, res) {
         res.end(data);
       });
     } else {
-      var formatedUrl = `${archive.paths.archivedSites}${url}`;
-      
       archive.isUrlArchived(url, (err, data) => {
         if (data) {
-          serveAssets(res, url, (err, data) => {
+          console.log(url);
+          serveAssets(res, `${archive.paths.archivedSites}${url}`, (err, data) => {
             res.writeHead(200, headers);
+            console.log(data);
             res.end(data);
           });
         } else {
@@ -40,17 +40,11 @@ exports.handleRequest = function (req, res) {
       archive.isUrlInList(body, (err, exists) => {
         console.log(exists, body);
         if (exists) {
-          res.write(`${archive.paths.archivedSites}/${body}`);
-          // http.get(`${archive.paths.archivedSites}/${body}`);
-          // res.writeHead(303, headers);
+          res.writeHead(303, {location: `/${body}`});
           res.end();
-          // serveAssets(res, `${archive.paths.archivedSites}/${body}`, (err, data) => {
-          //   res.writeHead(303, headers);
-          //   res.end(data);
-          // });
         } else {
           archive.addUrlToList(body + '\n', () => {
-            res.writeHead(302, headers);
+            res.writeHead(302, {location: `${archive.paths.loading.slice(59)}`});
             res.end();
           });
         }
